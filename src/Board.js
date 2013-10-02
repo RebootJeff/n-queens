@@ -7,7 +7,7 @@
   window.Board = Backbone.Model.extend({
 
     initialize: function (params) {
-      if (typeof params == "undefined" || params == null) {
+      if (typeof params === "undefined" || params === null) {
         console.log('Good guess! But to use the Board() constructor, you must pass it an argument in one of the following formats:');
         console.log('\t1. An object. To create an empty board of size n:\n\t\t{n: %c<num>%c} - Where %c<num> %cis the dimension of the (empty) board you wish to instantiate\n\t\t%cEXAMPLE: var board = new Board({n:5})', 'color: blue;', 'color: black;','color: blue;', 'color: black;', 'color: grey;');
         console.log('\t2. An array of arrays (a matrix). To create a populated board of size n:\n\t\t[ [%c<val>%c,%c<val>%c,%c<val>%c...], [%c<val>%c,%c<val>%c,%c<val>%c...], [%c<val>%c,%c<val>%c,%c<val>%c...] ] - Where each %c<val>%c is whatever value you want at that location on the board\n\t\t%cEXAMPLE: var board = new Board([[1,0,0],[0,1,0],[0,0,1]])', 'color: blue;', 'color: black;','color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: grey;');
@@ -79,11 +79,21 @@
     // 
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex){
-      return false; // fixme
+      var row = this.get(rowIndex);
+      var count = 0;
+      for(var i = 0; i < row.length; i++){
+        row[i] && count++;
+      }
+      return (count > 1) ? true : false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function(){
+      for(var rowIndex = 0; rowIndex < this.get('n'); rowIndex++){
+        if(this.hasRowConflictAt(rowIndex)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -94,12 +104,22 @@
     // 
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex){
-      return false; // fixme
+      var count = 0;
+      for(var rowIndex = 0; rowIndex < this.get('n'); rowIndex++){
+        var row = this.get(rowIndex);
+        row[colIndex] && count++;
+      }
+      return (count > 1) ? true : false;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function(){
-      return false; // fixme
+      for(var colIndex = 0; colIndex < this.get('n'); colIndex++){
+        if(this.hasColConflictAt(colIndex)){
+          return true;
+        }
+      }
+      return false;
     },
 
 
