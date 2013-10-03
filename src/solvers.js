@@ -89,7 +89,7 @@ window.findNQueensSolution = function(n){
   for(var rowIndex = 0; rowIndex < n; rowIndex++){
     for(var colIndex = 0; colIndex < n; colIndex++){
       board.togglePiece(rowIndex, colIndex);
-      if (board.hasAnyQueensConflicts()){
+      if (board.hasAnyQueenConflictsOn(rowIndex, colIndex)){
         board.togglePiece(rowIndex,colIndex);
       }
     }
@@ -119,7 +119,7 @@ window.countNQueensSolutions = function(n){
     }
     for (var colIndex = 0; colIndex < n; colIndex++) {
       board.togglePiece(rowIndex,colIndex);
-      if (board.hasAnyQueensConflicts()){
+      if (board.hasAnyQueenConflictsOn(rowIndex, colIndex)){
         board.togglePiece(rowIndex,colIndex);
       }else{
         rowIndex++;
