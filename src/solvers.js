@@ -30,7 +30,7 @@ window.findNRooksSolution = function(n){
       }
     }
   }
-  // console.log('Single solution for ' + n + ' rooks:', JSON.stringify(board.rows()));
+  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(board.rows()));
   return board.rows();
 };
 
@@ -38,6 +38,7 @@ window.findNRooksSolution = function(n){
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n){
+  var start = new Date().getTime();
   var makeEmptyMatrix = function(n){
     return _(_.range(n)).map(function(){
       return _(_.range(n)).map(function(){
@@ -66,6 +67,9 @@ window.countNRooksSolutions = function(n){
     }
   };
   rookRecursive();
+  var end = new Date().getTime();
+  var total = end - start;
+  console.log("The total time to run is nRooks "+total+"ms");
   return solutions.length;
 };
 
@@ -73,17 +77,61 @@ window.countNRooksSolutions = function(n){
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n){
-  var solution = undefined; //fixme
-
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  var makeEmptyMatrix = function(n){
+    return _(_.range(n)).map(function(){
+      return _(_.range(n)).map(function(){
+        return 0;
+      });
+    });
+  };
+  var matrix = makeEmptyMatrix(n);
+  var board = new Board(matrix);
+  for(var rowIndex = 0; rowIndex < n; rowIndex++){
+    for(var colIndex = 0; colIndex < n; colIndex++){
+      board.togglePiece(rowIndex, colIndex);
+      if (board.hasAnyQueensConflicts()){
+        board.togglePiece(rowIndex,colIndex);
+      }
+    }
+  }
+  console.log('Single solution for ' + n + ' queens:', JSON.stringify(board.rows()));
+  return board.rows();
 };
 
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n){
-  var solutionCount = undefined; //fixme
-
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  var start = new Date().getTime();
+  var makeEmptyMatrix = function(n){
+    return _(_.range(n)).map(function(){
+      return _(_.range(n)).map(function(){
+        return 0;
+      });
+    });
+  };
+  var matrix = makeEmptyMatrix(n);
+  var board = new Board(matrix);
+  var rowIndex = 0;
+  var solutions = [];
+  var queenRecursive = function(){
+    if (rowIndex === n){
+      return solutions.push($.extend(true,[],board.rows()));
+    }
+    for (var colIndex = 0; colIndex < n; colIndex++) {
+      board.togglePiece(rowIndex,colIndex);
+      if (board.hasAnyQueensConflicts()){
+        board.togglePiece(rowIndex,colIndex);
+      }else{
+        rowIndex++;
+        queenRecursive();
+        rowIndex--;
+        board.togglePiece(rowIndex,colIndex);
+      }
+    }
+  };
+  queenRecursive();
+  var end = new Date().getTime();
+  var total = end - start;
+  console.log("The total time to run is nQueens "+total+"ms");
+  return solutions.length;
 };
