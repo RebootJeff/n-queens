@@ -113,23 +113,27 @@ window.countNQueensSolutions = function(n){
   var board = new Board(matrix);
   var rowIndex = 0;
   var solutions = [];
-  var queenRecursive = function(){
+  var queenRecursive = function(prevColIndex){
     if (rowIndex === n){
       return solutions.push($.extend(true,[],board.rows()));
     }
     for (var colIndex = 0; colIndex < n; colIndex++) {
-      board.togglePiece(rowIndex,colIndex);
-      if (board.hasAnyQueenConflictsOn(rowIndex, colIndex)){
-        board.togglePiece(rowIndex,colIndex);
+      if (colIndex >= prevColIndex-1 && colIndex <= prevColIndex+1){
+        colIndex = prevColIndex + 1;
       }else{
-        rowIndex++;
-        queenRecursive();
-        rowIndex--;
         board.togglePiece(rowIndex,colIndex);
+        if (board.hasAnyQueenConflictsOn(rowIndex, colIndex)){
+          board.togglePiece(rowIndex,colIndex);
+        }else{
+        rowIndex++;
+          queenRecursive(colIndex);
+          rowIndex--;
+          board.togglePiece(rowIndex,colIndex);
+        }
       }
     }
   };
-  queenRecursive();
+  queenRecursive(-2);
   var end = new Date().getTime();
   var total = end - start;
   console.log("The total time to run is nQueens "+total+"ms");
