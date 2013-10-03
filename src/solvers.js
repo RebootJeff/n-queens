@@ -112,30 +112,41 @@ window.countNQueensSolutions = function(n){
   var matrix = makeEmptyMatrix(n);
   var board = new Board(matrix);
   var rowIndex = 0;
-  var solutions = [];
-  var queenRecursive = function(prevColIndex){
+  var solutionsCount = 0;
+  var breadcrumbArr = _(_.range(n)).map(function(){ return false; });
+  var queenRecursive = function(colArr,majArr,minArr){
     if (rowIndex === n){
-      return solutions.push($.extend(true,[],board.rows()));
+      return solutionsCount++;
     }
     for (var colIndex = 0; colIndex < n; colIndex++) {
-      if (colIndex >= prevColIndex-1 && colIndex <= prevColIndex+1){
-        colIndex = prevColIndex + 1;
+      if (colArr[colIndex]){
+        continue;
+      }else if(majArr[board._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex,colIndex)]){
+        continue;
+      }else if(minArr[board._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex,colIndex)]){
+        continue;
       }else{
         board.togglePiece(rowIndex,colIndex);
         if (board.hasAnyQueenConflictsOn(rowIndex, colIndex)){
           board.togglePiece(rowIndex,colIndex);
         }else{
-        rowIndex++;
-          queenRecursive(colIndex);
+          colArr[colIndex] = true;
+          majArr[board._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex,colIndex)] = true;
+          minArr[board._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex,colIndex)] = true;
+          rowIndex++;
+          queenRecursive(colArr,majArr,minArr);
           rowIndex--;
+          colArr[colIndex] = false;
+          majArr[board._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex,colIndex)] = false;
+          minArr[board._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex,colIndex)] = false;
           board.togglePiece(rowIndex,colIndex);
         }
       }
     }
   };
-  queenRecursive(-2);
+  queenRecursive(breadcrumbArr,breadcrumbArr.slice(),breadcrumbArr.slice());
   var end = new Date().getTime();
   var total = end - start;
   console.log("The total time to run is nQueens "+total+"ms");
-  return solutions.length;
+  return solutionsCount;
 };
